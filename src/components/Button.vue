@@ -1,28 +1,48 @@
 <script setup lang="ts">
-defineProps<{ label: string }>();
+import type { ButtonHTMLAttributes } from "vue";
+
+interface Props extends /* @vue-ignore */ ButtonHTMLAttributes {
+  label: string;
+  primary?: boolean;
+  type?: "button" | "submit" | "reset";
+}
+
+const { label, primary = false, type = "button" } = defineProps<Props>();
 </script>
 
 <template>
-    <button>{{ label }}</button>
+  <button :class="{ primary: primary }" :type="type" v-bind="$attrs">
+    {{ label }}
+  </button>
 </template>
 
 <style scoped>
 button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
+  transition: border-color 0.25s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background-color: var(--button-default-bg);
+  padding: 0.6em 1.2em;
+  height: 40px;
+  color: var(--button-default-text);
+  font-weight: 500;
+  font-size: 1em;
+  font-family: inherit;
 }
 button:hover {
-    border-color: #646cff;
+  background-color: oklch(from var(--button-default-bg) calc(l - 0.05) c h);
+  color: oklch(from var(--button-default-text) calc(l - 0.05) c h);
 }
-button:focus,
 button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
+  outline: 4px auto -webkit-focus-ring-color;
+}
+.primary {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}
+.primary:hover {
+  background-color: oklch(from var(--button-primary-bg) calc(l + 0.05) c h);
+  color: oklch(from var(--button-primary-text) calc(l - 0.05) c h);
 }
 </style>
