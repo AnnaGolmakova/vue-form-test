@@ -2,13 +2,13 @@
 import { useId } from "vue";
 
 interface Props {
-  selected: string;
+  selected: string | number;
   values: TabItemType[];
 }
 
 type TabItemType = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 const { selected, values } = defineProps<Props>();
