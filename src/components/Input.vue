@@ -47,6 +47,9 @@ const uniqueId = useId();
 label {
   padding-bottom: 8px;
   color: var(--text-primary);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
 }
 input {
   box-sizing: border-box;

@@ -60,6 +60,9 @@ const message = ref("");
 label {
   padding-bottom: 8px;
   color: var(--text-primary);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
 }
 textarea {
   box-sizing: border-box;
@@ -101,6 +104,7 @@ textarea::placeholder {
   line-height: 16px;
 }
 .counter {
+  flex-grow: 1;
   color: var(--text-tertiary);
   text-align: right;
 }
