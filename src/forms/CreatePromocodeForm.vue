@@ -12,6 +12,8 @@ import { computed, useId, ref, onMounted, onBeforeUnmount } from "vue";
 import { Form } from "vee-validate";
 import type { InferType } from "yup";
 
+const emit = defineEmits(["cancel", "save"]);
+
 import { promocodeSchema } from "../schema/promocode";
 
 const uniqueId = useId();
@@ -41,6 +43,7 @@ const formValues = {
 function handleSubmit(values: InferType<typeof promocodeSchema>) {
   if (currentStep.value === totalSteps) {
     console.log(values);
+    emit("save");
   } else {
     nextStep();
   }
