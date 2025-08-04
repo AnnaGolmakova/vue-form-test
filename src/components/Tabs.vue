@@ -9,6 +9,7 @@ interface Props {
 type TabItemType = {
   label: string;
   value: string | number;
+  disabled?: boolean;
 };
 
 const { selected, values } = defineProps<Props>();
@@ -22,7 +23,7 @@ const uniqueId = useId();
       v-for="item in values"
       :key="item.value"
       :aria-selected="item.value === selected"
-      :disabled="item.value === selected"
+      :disabled="item.value === selected || item.disabled"
       :class="{ active: item.value === selected }"
       :id="uniqueId + '-' + item.value"
       @click="$emit('select', item.value)"
