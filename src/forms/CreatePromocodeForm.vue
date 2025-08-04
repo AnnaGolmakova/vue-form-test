@@ -78,10 +78,11 @@ const uniqueId = useId();
         />
         <RadioGroup
           label="Настроить получение промокода"
-          name="send"
+          name="sendToUsers"
+          :default-value="false"
           :values="[
-            { label: 'Создать промокод без отправки', value: 'keep' },
-            { label: 'Отправить промокод всем пользователям', value: 'send' },
+            { label: 'Создать промокод без отправки', value: false },
+            { label: 'Отправить промокод всем пользователям', value: true },
           ]"
         />
       </fieldset>

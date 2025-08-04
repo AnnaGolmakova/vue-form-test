@@ -4,15 +4,16 @@ import { useId } from "vue";
 interface Props {
   label: string;
   name: string;
+  defaultValue?: string | number | boolean;
   values: RadioItemType[];
 }
 
 type RadioItemType = {
   label: string;
-  value: string;
+  value: string | number | boolean;
 };
 
-const { label, name, values } = defineProps<Props>();
+const { label, name, defaultValue = "", values } = defineProps<Props>();
 const uniqueId = useId();
 </script>
 
@@ -29,6 +30,7 @@ const uniqueId = useId();
           :name="name"
           :id="uniqueId + '-' + item.value"
           :value="item.value"
+          :checked="item.value === defaultValue"
           type="radio"
           class="visually-hidden"
         />
