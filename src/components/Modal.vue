@@ -38,11 +38,13 @@ dialog {
   border-radius: 16px;
   background-color: var(--default-background);
   padding: 24px;
+  width: 100%;
   max-width: 516px;
 }
 @media (width < 540px) {
   dialog {
     margin: auto 16px;
+    width: calc(100% - 16px * 2);
   }
 }
 @media (width < 375px) {
@@ -50,6 +52,7 @@ dialog {
     margin: 0;
     border-radius: 0px;
     padding: 16px;
+    width: 100%;
     min-height: 100vh;
   }
 }
