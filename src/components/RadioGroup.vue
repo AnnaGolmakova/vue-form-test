@@ -25,7 +25,7 @@ const uniqueId = useId();
   >
     <div class="caption" :id="uniqueId + '-caption'">{{ label }}</div>
     <div class="items">
-      <div class="item" v-for="item in values" :key="item.value">
+      <div class="item" v-for="item in values" :key="item.value.toString()">
         <input
           :name="name"
           :id="uniqueId + '-' + item.value"
