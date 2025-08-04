@@ -9,6 +9,8 @@ import Tabs from "../components/Tabs.vue";
 
 import { useId } from "vue";
 
+import { promocodeSchema } from "../schema/promocode";
+
 const uniqueId = useId();
 </script>
 
