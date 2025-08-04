@@ -14,16 +14,27 @@ export const promocodeSchema = yup.object().shape({
   description: yup
     .string()
     .trim()
-    .optional()
-    .max(250, "Не больше 250 символов"),
-  amount: yup.number().required("Укажите количество баллов"),
-  start: yup.date().required("Обязательное поле"),
+    .max(250, "Не больше 250 символов")
+    .default(""),
+  amount: yup
+    .number()
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .positive("Количество должно быть больше нуля")
+    .required("Укажите количество баллов"),
+  start: yup.date().required("Выберите дату начала действия промокода"),
   end: yup.date().when("isUnlimited", {
     is: true,
     then: (schema) => schema.strip(),
-    otherwise: (schema) => schema.required("Обязательное поле"),
+    otherwise: (schema) =>
+      schema.required(
+        "Укажите дату окончания или отметьте галку «Без даты конца»",
+      ),
   }),
   isUnlimited: yup.boolean(),
-  limit: yup.number().required("Укажите лимит активаций"),
+  limit: yup
+    .number()
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .positive("Лимит должен быть больше нуля")
+    .required("Укажите лимит активаций"),
   sendToUsers: yup.boolean(),
 });

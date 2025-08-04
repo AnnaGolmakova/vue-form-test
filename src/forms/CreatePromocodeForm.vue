@@ -7,13 +7,42 @@ import DatePicker from "../components/DatePicker.vue";
 import RadioGroup from "../components/RadioGroup.vue";
 import Tabs from "../components/Tabs.vue";
 
-import { useId, ref, onMounted, onBeforeUnmount } from "vue";
+import { computed, useId, ref, onMounted, onBeforeUnmount } from "vue";
+import { Form } from "vee-validate";
+import type { InferType } from "yup";
 
 import { promocodeSchema } from "../schema/promocode";
 
 const uniqueId = useId();
 const currentStep = ref(1);
 const totalSteps = 2;
+
+const schemas = [
+  promocodeSchema.pick(["name", "title", "description", "amount"]),
+  promocodeSchema.pick(["start", "end", "isUnlimited", "limit", "sendToUsers"]),
+];
+const currentSchema = computed(() => {
+  return schemas[currentStep.value - 1];
+});
+
+const formValues = {
+  name: undefined,
+  title: undefined,
+  description: "",
+  amount: undefined,
+  start: undefined,
+  isUnlimited: false,
+  limit: undefined,
+  sendToUsers: false,
+};
+
+function handleSubmit(values: InferType<typeof promocodeSchema>) {
+  if (currentStep.value === totalSteps) {
+    console.log(values);
+  } else {
+    nextStep();
+  }
+}
 
 function nextStep() {
   if (currentStep.value < totalSteps) {
@@ -75,7 +104,13 @@ onBeforeUnmount(() => {
       @select="(id: number) => handleTabSelection(id)"
     />
 
-    <form>
+    <Form
+      keep-values
+      :initial-values="formValues"
+      :validation-schema="currentSchema"
+      @submit="handleSubmit"
+      v-slot="{ values, errors }"
+    >
       <!-- First step fields -->
       <fieldset class="step first" v-if="currentStep === 1">
         <Input
@@ -102,6 +137,7 @@ onBeforeUnmount(() => {
           label="Укажи количество баллов"
           placeholder="100"
           name="amount"
+          min="1"
           type="number"
           required
         />
@@ -115,15 +151,29 @@ onBeforeUnmount(() => {
           </h2>
           <div class="dates">
             <DatePicker label="Дата начала" name="start" />
-            <DatePicker label="Дата конца" name="end" />
+            <DatePicker
+              label="Дата конца"
+              name="end"
+              v-if="values.isUnlimited !== true"
+            />
           </div>
           <Checkbox label="Без даты конца" name="isUnlimited" />
+          <span class="error" v-if="errors.start && errors.end">
+            Укажите срок действия промокода
+          </span>
+          <span class="error" v-if="errors.start && !errors.end">
+            {{ errors.start }}
+          </span>
+          <span class="error" v-if="!errors.start && errors.end">
+            {{ errors.end }}
+          </span>
         </fieldset>
         <hr />
         <Input
           label="Введите лимит активаций (шт.)"
           placeholder="1000"
           name="limit"
+          min="1"
           type="number"
           required
         />
@@ -139,10 +189,20 @@ onBeforeUnmount(() => {
       </fieldset>
 
       <div class="actions">
-        <Button label="Отмена" type="reset" />
-        <Button label="Далее" type="submit" primary />
+        <Button label="Отмена" type="reset" v-if="currentStep === 1" />
+        <Button
+          type="button"
+          label="Назад"
+          v-if="currentStep > 1"
+          @click="prevStep"
+        />
+        <Button
+          :label="currentStep !== totalSteps ? 'Далее' : 'Сохранить'"
+          type="submit"
+          primary
+        />
       </div>
-    </form>
+    </Form>
   </div>
 </template>
 
@@ -198,5 +258,12 @@ h2 {
   font-weight: 500;
   font-size: 14px;
   line-height: 18px;
+}
+.error {
+  padding-top: 4px;
+  color: var(--danger);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
 }
 </style>

@@ -8,14 +8,19 @@ const modalRef = ref();
 </script>
 
 <template>
-  <Button label="Показать модалку" primary @click="modalRef.open()" />
-  <Modal ref="modalRef"><CreatePromocodeForm /></Modal>
+  <Button label="Создать промокод" primary @click="modalRef.open()" />
+  <Modal ref="modalRef">
+    <Suspense>
+      <CreatePromocodeForm />
+    </Suspense>
+  </Modal>
 </template>
 
 <style>
 body {
   display: grid;
   place-items: center;
+  margin: 0;
   min-width: 100vw;
   min-height: 100vh;
 }

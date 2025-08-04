@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { InputHTMLAttributes } from "vue";
 import { useId } from "vue";
+import { useField } from "vee-validate";
 
 interface Props extends /* @vue-ignore */ InputHTMLAttributes {
   invalid?: boolean;
@@ -21,6 +22,7 @@ const {
 } = defineProps<Props>();
 
 const uniqueId = useId();
+const { value, errorMessage } = useField(() => name);
 </script>
 
 <template>
@@ -29,13 +31,16 @@ const uniqueId = useId();
       {{ label }}<span class="required" v-if="required">*</span>
     </label>
     <input
-      :class="{ error: invalid }"
+      :class="{ error: invalid || errorMessage }"
       :id="uniqueId"
       :name="name"
       :placeholder="placeholder"
       v-bind="$attrs"
+      v-model="value"
     />
-    <div class="error-text" v-if="invalidText">{{ invalidText }}</div>
+    <div class="error-text" v-if="invalidText || errorMessage">
+      {{ invalidText || errorMessage }}
+    </div>
   </div>
 </template>
 

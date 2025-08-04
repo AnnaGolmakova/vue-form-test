@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef, ref } from "vue";
+import { useField } from "vee-validate";
 
 interface Props {
   label: string;
@@ -7,9 +8,12 @@ interface Props {
 }
 
 const { label, name } = defineProps<Props>();
+const { value, setValue, errorMessage } = useField<string>(() => name);
 
 const dateInput = useTemplateRef("date-input");
 const timeInput = useTemplateRef("time-input");
+const date = ref(value.value?.split(" ")[0]);
+const time = ref(value.value?.split(" ")[1] ?? "00:00");
 
 function openCalendar() {
   try {
@@ -22,18 +26,40 @@ function openTime() {
     timeInput.value?.showPicker();
   } catch {}
 }
+
+function handleChange() {
+  if (date.value && time.value) {
+    setValue(date.value + " " + time.value);
+  }
+}
 </script>
 
 <template>
   <div class="container">
     <div class="caption">{{ label }}</div>
     <div class="fields">
-      <label class="field date" @click="openCalendar">
+      <label
+        class="field date"
+        :class="{ error: errorMessage }"
+        @click="openCalendar"
+      >
         <span class="date-label">Дата</span>
-        <input type="date" ref="date-input" :name="name + '-date'" />
+        <input
+          type="date"
+          ref="date-input"
+          :name="name + '-date'"
+          v-model="date"
+          @change="handleChange"
+        />
       </label>
       <label class="field time" @click="openTime">
-        <input type="time" ref="time-input" :name="name + '-time'" />
+        <input
+          type="time"
+          ref="time-input"
+          :name="name + '-time'"
+          v-model="time"
+          @change="handleChange"
+        />
       </label>
     </div>
   </div>
@@ -68,8 +94,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   line-height: 18px;
 }
 .fields {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: minmax(140px, 160px) minmax(60px, 80px);
   gap: 4px;
 }
 .field {
@@ -79,9 +105,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-radius: 12px;
   background-color: var(--input-background);
   height: 44px;
-}
-.date {
-  width: 140px;
 }
 .date::before {
   display: block;
@@ -107,9 +130,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 .time {
   justify-content: center;
-  width: 80px;
 }
 .time input {
   padding: 12px;
+}
+.error {
+  border: 1px solid var(--danger);
 }
 </style>

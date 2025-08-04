@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { InputHTMLAttributes } from "vue";
+import { useField } from "vee-validate";
 
 interface Props extends /* @vue-ignore */ InputHTMLAttributes {
   label: string;
@@ -7,6 +8,7 @@ interface Props extends /* @vue-ignore */ InputHTMLAttributes {
 }
 
 const { label, name } = defineProps<Props>();
+const { value } = useField(() => name);
 </script>
 
 <template>
@@ -16,6 +18,7 @@ const { label, name } = defineProps<Props>();
       type="checkbox"
       :name="name"
       v-bind="$attrs"
+      v-model="value"
     />
     {{ label }}
   </label>

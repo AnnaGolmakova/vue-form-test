@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useId } from "vue";
+import { useField } from "vee-validate";
 
 interface Props {
   label: string;
@@ -15,6 +16,7 @@ type RadioItemType = {
 
 const { label, name, defaultValue = "", values } = defineProps<Props>();
 const uniqueId = useId();
+const { value } = useField(() => name);
 </script>
 
 <template>
@@ -33,6 +35,7 @@ const uniqueId = useId();
           :checked="item.value === defaultValue"
           type="radio"
           class="visually-hidden"
+          v-model="value"
         />
         <label :for="uniqueId + '-' + item.value">
           {{ item.label }}

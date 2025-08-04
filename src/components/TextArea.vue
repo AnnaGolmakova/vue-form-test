@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TextareaHTMLAttributes } from "vue";
-import { ref, useId } from "vue";
+import { computed, useId } from "vue";
+import { useField } from "vee-validate";
 
 interface Props extends /* @vue-ignore */ TextareaHTMLAttributes {
   invalid?: boolean;
@@ -23,7 +24,12 @@ const {
 } = defineProps<Props>();
 
 const uniqueId = useId();
-const message = ref("");
+
+const { value, errorMessage } = useField<string>(() => name);
+
+const symbolsCount = computed(() => {
+  return value.value ? value.value.length : 0;
+});
 </script>
 
 <template>
@@ -32,21 +38,23 @@ const message = ref("");
       {{ label }}<span class="required" v-if="required">*</span>
     </label>
     <textarea
-      :class="{ invalid: invalid }"
+      :class="{ invalid: invalid || errorMessage }"
       :id="uniqueId"
       :name="name"
       :placeholder="placeholder"
+      v-model="value"
       v-bind="$attrs"
-      v-model="message"
     />
     <div class="info">
-      <div class="description error" v-if="invalidText">{{ invalidText }}</div>
+      <div class="description error" v-if="invalidText || errorMessage">
+        {{ invalidText || errorMessage }}
+      </div>
       <div
         class="counter"
-        :class="{ error: message.length >= maxlength }"
+        :class="{ error: symbolsCount > maxlength }"
         v-if="maxlength"
       >
-        {{ message.length }} / {{ maxlength }}
+        {{ symbolsCount }} / {{ maxlength }}
       </div>
     </div>
   </div>
@@ -92,10 +100,6 @@ textarea::placeholder {
   justify-content: space-between;
   gap: 16px;
 }
-.required,
-.error {
-  color: var(--danger);
-}
 .counter,
 .description {
   padding-top: 4px;
@@ -107,5 +111,9 @@ textarea::placeholder {
   flex-grow: 1;
   color: var(--text-tertiary);
   text-align: right;
+}
+.required,
+.error {
+  color: var(--danger);
 }
 </style>
