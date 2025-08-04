@@ -39,7 +39,9 @@ const uniqueId = useId();
   grid-template-columns: minmax(0, 1fr);
   grid-auto-columns: minmax(0, 1fr);
   grid-auto-flow: column;
+  gap: 10px;
   box-shadow: inset 0 -1px rgba(229, 229, 234, 1);
+  padding: 0 12px;
 }
 button {
   border: none;
