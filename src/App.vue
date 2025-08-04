@@ -11,7 +11,7 @@ const modalRef = ref();
   <Button label="Создать промокод" primary @click="modalRef.open()" />
   <Modal ref="modalRef">
     <Suspense>
-      <CreatePromocodeForm />
+      <CreatePromocodeForm @cancel="modalRef.close()" />
     </Suspense>
   </Modal>
 </template>

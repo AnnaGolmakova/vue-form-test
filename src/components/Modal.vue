@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { useTemplateRef, defineExpose } from "vue";
+import { ref, useTemplateRef, defineExpose } from "vue";
 
 const modalRef = useTemplateRef("modal");
+const isOpen = ref(false);
 
 function open() {
+  isOpen.value = true;
   modalRef.value?.showModal();
 }
 
@@ -11,28 +13,51 @@ function close() {
   modalRef.value?.close();
 }
 
-defineExpose({ open });
+function handleClose() {
+  isOpen.value = false;
+}
+
+defineExpose({ open, close });
 </script>
 
 <template>
-  <dialog ref="modal">
-    <button class="close" @click="close">
-      <span class="visually-hidden">Закрыть</span>
-    </button>
-    <slot></slot>
+  <dialog ref="modal" @close="handleClose">
+    <template v-if="isOpen">
+      <button class="close" @click="close">
+        <span class="visually-hidden">Закрыть</span>
+      </button>
+      <slot></slot>
+    </template>
   </dialog>
 </template>
 
 <style scoped>
 dialog {
+  box-sizing: border-box;
   border: none;
   border-radius: 16px;
   background-color: var(--default-background);
   padding: 24px;
   max-width: 516px;
 }
+@media (width < 540px) {
+  dialog {
+    margin: auto 16px;
+  }
+}
+@media (width < 375px) {
+  dialog {
+    margin: 0;
+    border-radius: 0px;
+    padding: 16px;
+    min-height: 100vh;
+  }
+}
 dialog::backdrop {
   background-color: var(--overlay);
+}
+dialog:focus {
+  outline: none;
 }
 .close {
   position: absolute;

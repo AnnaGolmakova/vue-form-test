@@ -189,7 +189,12 @@ onBeforeUnmount(() => {
       </fieldset>
 
       <div class="actions">
-        <Button label="Отмена" type="reset" v-if="currentStep === 1" />
+        <Button
+          label="Отмена"
+          type="reset"
+          v-if="currentStep === 1"
+          @click="$emit('cancel')"
+        />
         <Button
           type="button"
           label="Назад"
