@@ -252,6 +252,13 @@ h2 {
   gap: 20px;
   margin-bottom: 8px;
 }
+@media (width < 520px) {
+  .dates {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+}
 .actions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
