@@ -7,28 +7,77 @@ import DatePicker from "../components/DatePicker.vue";
 import RadioGroup from "../components/RadioGroup.vue";
 import Tabs from "../components/Tabs.vue";
 
-import { useId } from "vue";
+import { useId, ref, onMounted, onBeforeUnmount } from "vue";
 
 import { promocodeSchema } from "../schema/promocode";
 
 const uniqueId = useId();
+const currentStep = ref(1);
+const totalSteps = 2;
+
+function nextStep() {
+  if (currentStep.value < totalSteps) {
+    currentStep.value++;
+    history.pushState(
+      { step: currentStep.value },
+      `Шаг ${currentStep.value}`,
+      `?step=${currentStep.value}`,
+    );
+  }
+}
+
+function prevStep() {
+  if (currentStep.value > 1) {
+    currentStep.value--;
+    history.replaceState(
+      { step: currentStep.value },
+      `Шаг ${currentStep.value}`,
+      `?step=${currentStep.value}`,
+    );
+  }
+}
+
+function handleTabSelection(id: number) {
+  if (currentStep.value < id) {
+    nextStep();
+  } else {
+    prevStep();
+  }
+}
+
+function handlePopState(event: PopStateEvent) {
+  if (event.state && event.state.step) {
+    currentStep.value = event.state.step;
+  } else {
+    currentStep.value = 1;
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("popstate", handlePopState);
+  history.replaceState({ step: 1 }, `Шаг 1`, `?step=1`);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("popstate", handlePopState);
+});
 </script>
 
 <template>
   <div class="container">
     <h1>Создание промокода</h1>
     <Tabs
-      selected="first"
+      :selected="currentStep"
       :values="[
-        { label: 'Шаг 1: Основное', value: 'first' },
-        { label: 'Шаг 2: Настройки промокода', value: 'second' },
+        { label: 'Шаг 1: Основное', value: 1 },
+        { label: 'Шаг 2: Настройки промокода', value: 2 },
       ]"
-      @select="(id: string | number) => console.log(id)"
+      @select="(id: number) => handleTabSelection(id)"
     />
 
     <form>
       <!-- First step fields -->
-      <fieldset class="step first" hidden>
+      <fieldset class="step first" v-if="currentStep === 1">
         <Input
           label="Название промокода"
           placeholder="Введи название"
@@ -59,7 +108,7 @@ const uniqueId = useId();
       </fieldset>
 
       <!-- Second step fields -->
-      <fieldset class="step second">
+      <fieldset class="step second" v-if="currentStep === 2">
         <fieldset class="calendar" :aria-labelledby="uniqueId + '-h2'">
           <h2 :id="uniqueId + '-h2'">
             Срок действия промокода<span class="required">*</span>
@@ -124,7 +173,7 @@ h2 {
 .step {
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  margin: 20px 0 0 0;
 }
 .first {
   gap: 16px;
