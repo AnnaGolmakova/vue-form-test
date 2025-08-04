@@ -91,6 +91,9 @@ textarea {
 textarea::placeholder {
   color: var(--text-secondary);
 }
+textarea:focus {
+  outline: 2px solid var(--accent);
+}
 .invalid {
   border: 1px solid var(--danger);
 }

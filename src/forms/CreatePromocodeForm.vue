@@ -6,6 +6,7 @@ import TextArea from "../components/TextArea.vue";
 import DatePicker from "../components/DatePicker.vue";
 import RadioGroup from "../components/RadioGroup.vue";
 import Tabs from "../components/Tabs.vue";
+import BonusIcon from "../assets/bonus-icon.svg";
 
 import { computed, useId, ref, onMounted, onBeforeUnmount } from "vue";
 import { Form } from "vee-validate";
@@ -104,6 +105,7 @@ onBeforeUnmount(() => {
       @select="(id: number) => handleTabSelection(id)"
     />
 
+    <!-- @vue-ignore -->
     <Form
       keep-values
       :initial-values="formValues"
@@ -140,7 +142,9 @@ onBeforeUnmount(() => {
           min="1"
           type="number"
           required
-        />
+        >
+          <BonusIcon />
+        </Input>
       </fieldset>
 
       <!-- Second step fields -->
