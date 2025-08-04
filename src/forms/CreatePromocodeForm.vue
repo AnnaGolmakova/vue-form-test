@@ -17,6 +17,7 @@ import { promocodeSchema } from "../schema/promocode";
 const uniqueId = useId();
 const currentStep = ref(1);
 const totalSteps = 2;
+const formRef = ref();
 
 const schemas = [
   promocodeSchema.pick(["name", "title", "description", "amount"]),
@@ -45,14 +46,18 @@ function handleSubmit(values: InferType<typeof promocodeSchema>) {
   }
 }
 
-function nextStep() {
+async function nextStep() {
   if (currentStep.value < totalSteps) {
-    currentStep.value++;
-    history.pushState(
-      { step: currentStep.value },
-      `Шаг ${currentStep.value}`,
-      `?step=${currentStep.value}`,
-    );
+    const { valid } = await formRef.value.validate();
+
+    if (valid) {
+      currentStep.value++;
+      history.pushState(
+        { step: currentStep.value },
+        `Шаг ${currentStep.value}`,
+        `?step=${currentStep.value}`,
+      );
+    }
   }
 }
 
@@ -108,6 +113,7 @@ onBeforeUnmount(() => {
     <!-- @vue-ignore -->
     <Form
       keep-values
+      ref="formRef"
       :initial-values="formValues"
       :validation-schema="currentSchema"
       @submit="handleSubmit"
